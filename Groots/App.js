@@ -4,26 +4,38 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./screens/Authentication/Login";
 import Register from "./screens/Authentication/Register";
 import Home from "./screens/Home";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./config/Firebase";
+import InsideTabs from "./screens/InsideTabs";
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => setUser(user));
+  }, []);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Login/Home">
         <Stack.Group>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{ headerShown: false }}
-          />
-        </Stack.Group>
-        <Stack.Group>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
+          {user ? (
+            <Stack.Screen
+              name="Login/InsideTabs"
+              component={InsideTabs}
+              options={{ headerShown: false }}
+              initialParams={{ user }}
+            />
+          ) : (
+            <Stack.Screen
+              name="Login/InsideTabs"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+          )}
         </Stack.Group>
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen
@@ -35,13 +47,6 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;

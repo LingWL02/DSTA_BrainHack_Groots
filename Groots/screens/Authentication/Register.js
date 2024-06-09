@@ -6,12 +6,13 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import { auth } from "../../config/Firebase";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import * as Styles from "../../Styles/Standard";
 
-export default Register = ({ navigation }) => {
+const Register = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default Register = ({ navigation }) => {
         email,
         password
       );
-      navigation.navigate("Home");
+      navigation.navigate("Login/InsideTabs");
     } catch (err) {
       console.error(err);
       alert("Registration failed");
@@ -33,19 +34,8 @@ export default Register = ({ navigation }) => {
     }
   };
 
-  const logout = async () => {
-    setLoading(true);
-    try {
-      const response = await signOut(auth);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <View style={Styles.standard.container}>
+    <KeyboardAvoidingView style={Styles.standard.container} behavior="padding">
       <TextInput
         placeholder="Email..."
         value={email}
@@ -73,6 +63,8 @@ export default Register = ({ navigation }) => {
       >
         <Text style={Styles.standard.text}>Cancel</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
+
+export default Register;
